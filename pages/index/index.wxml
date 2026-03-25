@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="hero">
+    <view class="title">理财小程序已初始化</view>
+    <view class="subtitle">下一步可以接入账户、资产和收益模块</view>
+  </view>
+</view>

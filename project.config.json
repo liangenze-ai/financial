@@ -1,0 +1,30 @@
+{
+  "description": "微信小程序初始化项目",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "coverView": true,
+    "showShadowRootInWxmlPanel": true,
+    "packNpmManually": false,
+    "compileHotReLoad": true,
+    "lazyloadPlaceholderEnable": false,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.6.0",
+  "appid": "touristappid",
+  "projectname": "finance-miniprogram",
+  "condition": {}
+}

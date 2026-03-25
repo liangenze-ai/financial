@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "理财助手",
+    "navigationBarBackgroundColor": "#0A7D5A",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F4F8F6",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

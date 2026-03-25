@@ -1,0 +1,19 @@
+.hero {
+  background: linear-gradient(135deg, #0a7d5a, #0f9f73);
+  color: #ffffff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 16rpx 40rpx rgba(10, 125, 90, 0.24);
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  opacity: 0.92;
+  line-height: 1.5;
+}
