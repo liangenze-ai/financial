@@ -10,6 +10,12 @@ yarn-error.log*
 # Dependencies
 node_modules/
 miniprogram_npm/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+db.sqlite3
 
 # IDE
 .vscode/
