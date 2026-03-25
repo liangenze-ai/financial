@@ -27,6 +27,33 @@
 3. 启动服务：`D:/projects/理财项目设计/.venv/Scripts/python.exe manage.py runserver`
 4. 健康检查接口：`http://127.0.0.1:8000/api/health/`
 
+## 一键安装脚本（MongoDB / Redis / Celery）
+
+- Windows: `scripts/install_windows.ps1`
+- Linux (Ubuntu/Debian): `scripts/install_linux.sh`
+
+### Windows 用法
+
+1. 以管理员打开 PowerShell
+2. 执行：`Set-ExecutionPolicy -Scope Process Bypass`
+3. 执行：`./scripts/install_windows.ps1`
+
+### Linux 用法
+
+1. 给执行权限：`chmod +x scripts/install_linux.sh`
+2. 执行：`./scripts/install_linux.sh`
+
+### Django 连接配置
+
+- 配置文件：`backend/config/settings.py`
+- 环境变量模板：`backend/.env.example`
+- 关键变量：`MONGODB_URI` `MONGODB_NAME` `REDIS_URL` `CELERY_BROKER_URL` `CELERY_RESULT_BACKEND`
+
+### Celery 启动
+
+- Worker: `D:/projects/理财项目设计/.venv/Scripts/python.exe -m celery -A config worker -l info`
+- 位置：在 `backend/` 目录执行
+
 ## 后续建议
 
 - 增加登录态与用户资产模型

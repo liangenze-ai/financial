@@ -16,6 +16,9 @@ miniprogram_npm/
 __pycache__/
 *.py[cod]
 db.sqlite3
+.env
+*.env
+celerybeat-schedule
 
 # IDE
 .vscode/

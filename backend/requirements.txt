@@ -1,0 +1,5 @@
+django
+celery
+redis
+django-redis
+pymongo
