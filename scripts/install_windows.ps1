@@ -1,8 +1,47 @@
 Param(
-  [string]$ProjectRoot = "$(Resolve-Path "$PSScriptRoot\..").Path"
+  [string]$ProjectRoot = (Resolve-Path "$PSScriptRoot\.." | Select-Object -ExpandProperty Path)
 )
 
 $ErrorActionPreference = "Stop"
+
+function Test-IsAdmin {
+  $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+  $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+  return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+function Invoke-WingetInstall {
+  param(
+    [Parameter(Mandatory = $true)][string]$PackageId
+  )
+
+  winget install -e --id $PackageId --accept-source-agreements --accept-package-agreements
+  return ($LASTEXITCODE -eq 0)
+}
+
+function Ensure-ServiceStarted {
+  param(
+    [Parameter(Mandatory = $true)][string]$ServiceName
+  )
+
+  $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+  if (-not $svc) {
+    return $false
+  }
+
+  try {
+    Set-Service -Name $ServiceName -StartupType Automatic
+    Start-Service -Name $ServiceName -ErrorAction SilentlyContinue
+    return $true
+  } catch {
+    Write-Warning "Cannot set/start service '$ServiceName'. Run this script as Administrator."
+    return $false
+  }
+}
+
+if (-not (Test-IsAdmin)) {
+  throw "Please run this script in an elevated PowerShell window (Run as Administrator)."
+}
 
 Write-Host "[1/6] Checking package managers..."
 $hasWinget = $null -ne (Get-Command winget -ErrorAction SilentlyContinue)
@@ -14,14 +53,23 @@ if (-not $hasWinget -and -not $hasChoco) {
 
 Write-Host "[2/6] Installing MongoDB and Redis..."
 if ($hasWinget) {
-  try {
-    winget install -e --id MongoDB.Server --accept-source-agreements --accept-package-agreements
-    winget install -e --id Memurai.MemuraiDeveloper --accept-source-agreements --accept-package-agreements
-  } catch {
-    if ($hasChoco) {
-      choco install -y mongodb redis-64
+  $mongoOk = Invoke-WingetInstall -PackageId "MongoDB.Server"
+  if (-not $mongoOk -and $hasChoco) {
+    choco install -y mongodb
+  } elseif (-not $mongoOk) {
+    throw "MongoDB installation failed via winget and choco is unavailable."
+  }
+
+  $redisOk = Invoke-WingetInstall -PackageId "Memurai.MemuraiDeveloper"
+  if (-not $redisOk) {
+    $hasMemurai = $null -ne (Get-Service -Name "Memurai" -ErrorAction SilentlyContinue)
+    if ($hasMemurai) {
+      Write-Warning "Memurai installer returned a non-zero code, but Memurai service exists. Continuing."
+    } elseif ($hasChoco) {
+      choco install -y redis-64
     } else {
-      throw "winget install failed and choco not found."
+      Write-Warning "Redis install via winget failed and choco is unavailable."
+      Write-Warning "You can install Redis compatible service manually (e.g. Memurai) and rerun this script."
     }
   }
 } else {
@@ -29,19 +77,18 @@ if ($hasWinget) {
 }
 
 Write-Host "[3/6] Ensuring services are running..."
-$mongoService = Get-Service -Name MongoDB -ErrorAction SilentlyContinue
-if ($mongoService) {
-  Set-Service -Name MongoDB -StartupType Automatic
-  Start-Service -Name MongoDB -ErrorAction SilentlyContinue
+$mongoStarted = Ensure-ServiceStarted -ServiceName "MongoDB"
+
+$redisStarted = Ensure-ServiceStarted -ServiceName "Memurai"
+if (-not $redisStarted) {
+  $redisStarted = Ensure-ServiceStarted -ServiceName "Redis"
 }
 
-$redisService = Get-Service -Name "Memurai" -ErrorAction SilentlyContinue
-if (-not $redisService) {
-  $redisService = Get-Service -Name "Redis" -ErrorAction SilentlyContinue
+if (-not $mongoStarted) {
+  Write-Warning "MongoDB service not found. Check installation logs and install status."
 }
-if ($redisService) {
-  Set-Service -Name $redisService.Name -StartupType Automatic
-  Start-Service -Name $redisService.Name -ErrorAction SilentlyContinue
+if (-not $redisStarted) {
+  Write-Warning "Redis/Memurai service not found. Check installation logs and install status."
 }
 
 Write-Host "[4/6] Installing Python packages in .venv..."
