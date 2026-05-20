@@ -1,6 +1,7 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/stockscore/index"
   ],
   "window": {
     "navigationBarTitleText": "理财助手",

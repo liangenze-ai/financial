@@ -1,0 +1,70 @@
+.container {
+  padding: 32rpx;
+  background: #f7f9fa;
+}
+.header {
+  margin-bottom: 32rpx;
+}
+.title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #0a7d5a;
+}
+.desc {
+  font-size: 26rpx;
+  color: #888;
+  margin-top: 8rpx;
+}
+.stock-card {
+  background: #fff;
+  border-radius: 18rpx;
+  box-shadow: 0 4rpx 24rpx rgba(10,125,90,0.08);
+  margin-bottom: 32rpx;
+  padding: 28rpx 24rpx;
+}
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.stock-name {
+  font-size: 32rpx;
+  font-weight: 500;
+}
+.stock-score {
+  font-size: 36rpx;
+  color: #0a7d5a;
+  font-weight: bold;
+}
+.score-unit {
+  font-size: 22rpx;
+  color: #888;
+  margin-left: 4rpx;
+}
+.factors {
+  margin: 12rpx 0 8rpx 0;
+}
+.factor-item {
+  font-size: 26rpx;
+  color: #444;
+  margin-bottom: 4rpx;
+}
+.factor-name {
+  color: #0a7d5a;
+}
+.reason {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+.reason-label {
+  color: #0a7d5a;
+  font-weight: 500;
+}
+.loading {
+  text-align: center;
+  color: #aaa;
+  font-size: 30rpx;
+  margin-top: 80rpx;
+}

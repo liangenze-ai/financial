@@ -51,13 +51,13 @@ if (-not $hasWinget -and -not $hasChoco) {
   throw "Neither winget nor choco found. Install one of them first."
 }
 
-Write-Host "[2/6] Installing MongoDB and Redis..."
+Write-Host "[2/6] Installing PostgreSQL and Redis..."
 if ($hasWinget) {
-  $mongoOk = Invoke-WingetInstall -PackageId "MongoDB.Server"
-  if (-not $mongoOk -and $hasChoco) {
-    choco install -y mongodb
-  } elseif (-not $mongoOk) {
-    throw "MongoDB installation failed via winget and choco is unavailable."
+  $postgresOk = Invoke-WingetInstall -PackageId "PostgreSQL.PostgreSQL"
+  if (-not $postgresOk -and $hasChoco) {
+    choco install -y postgresql
+  } elseif (-not $postgresOk) {
+    throw "PostgreSQL installation failed via winget and choco is unavailable."
   }
 
   $redisOk = Invoke-WingetInstall -PackageId "Memurai.MemuraiDeveloper"
@@ -73,19 +73,19 @@ if ($hasWinget) {
     }
   }
 } else {
-  choco install -y mongodb redis-64
+  choco install -y postgresql redis-64
 }
 
 Write-Host "[3/6] Ensuring services are running..."
-$mongoStarted = Ensure-ServiceStarted -ServiceName "MongoDB"
+$postgresStarted = Ensure-ServiceStarted -ServiceName "postgresql*"
 
 $redisStarted = Ensure-ServiceStarted -ServiceName "Memurai"
 if (-not $redisStarted) {
   $redisStarted = Ensure-ServiceStarted -ServiceName "Redis"
 }
 
-if (-not $mongoStarted) {
-  Write-Warning "MongoDB service not found. Check installation logs and install status."
+if (-not $postgresStarted) {
+  Write-Warning "PostgreSQL service not found. Check installation logs and install status."
 }
 if (-not $redisStarted) {
   Write-Warning "Redis/Memurai service not found. Check installation logs and install status."
@@ -99,13 +99,19 @@ if (-not (Test-Path $pythonExe)) {
 & $pythonExe -m pip install --upgrade pip
 & $pythonExe -m pip install -r (Join-Path $ProjectRoot "backend\requirements.txt")
 
+Write-Host "PostgreSQL database/user setup:"
+Write-Host "  Create database: finance_db"
+Write-Host "  Create user: finance_app"
+Write-Host "  Password: finance_app"
+Write-Host "If PostgreSQL asks for an admin password during installation, create these manually in pgAdmin or psql."
+
 Write-Host "[5/6] Applying Django migrations..."
 Push-Location (Join-Path $ProjectRoot "backend")
 & $pythonExe manage.py migrate
 Pop-Location
 
 Write-Host "[6/6] Completed."
-Write-Host "MongoDB default: mongodb://127.0.0.1:27017"
+Write-Host "PostgreSQL default: postgresql://finance_app:finance_app@127.0.0.1:5432/finance_db"
 Write-Host "Redis default: redis://127.0.0.1:6379"
 Write-Host "Start Django: cd backend; $pythonExe manage.py runserver"
 Write-Host "Start Celery: cd backend; $pythonExe -m celery -A config worker -l info"

@@ -1,0 +1,29 @@
+<view class="container">
+  <view class="header">
+    <text class="title">全市场股票评分</text>
+    <text class="desc">模型为每只股票打分，并展示主要影响因子</text>
+  </view>
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  <block wx:else>
+    <block wx:for="{{stocks}}" wx:key="code">
+      <view class="stock-card">
+        <view class="stock-header">
+          <text class="stock-name">{{item.name}}({{item.code}})</text>
+          <text class="stock-score">{{item.score}}<text class="score-unit">分</text></text>
+        </view>
+        <progress percent="{{item.score}}" show-info stroke-width="8" active color="#0a7d5a"/>
+        <view class="factors">
+          <block wx:for="{{item.factors}}" wx:key="factor">
+            <view class="factor-item">
+              <text class="factor-name">{{factor.name}}：</text>
+              <text class="factor-value">{{factor.value}}</text>
+            </view>
+          </block>
+        </view>
+        <view class="reason">
+          <text class="reason-label">评分理由：</text>{{item.reason}}
+        </view>
+      </view>
+    </block>
+  </block>
+</view>

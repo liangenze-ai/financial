@@ -13,31 +13,16 @@ sudo apt-get install -y redis-server
 sudo systemctl enable redis-server
 sudo systemctl restart redis-server
 
-echo "[3/7] Adding MongoDB repository..."
-if [[ ! -f /usr/share/keyrings/mongodb-server-8.0.gpg ]]; then
-  curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc \
-    | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-8.0.gpg
-fi
+echo "[3/7] Installing PostgreSQL..."
+sudo apt-get install -y postgresql postgresql-contrib libpq-dev
+sudo systemctl enable postgresql
+sudo systemctl restart postgresql
 
-. /etc/os-release
-if [[ "${ID}" == "ubuntu" ]]; then
-  UBUNTU_CODENAME="${UBUNTU_CODENAME:-jammy}"
-  echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu ${UBUNTU_CODENAME}/mongodb-org/8.0 multiverse" \
-    | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list >/dev/null
-elif [[ "${ID}" == "debian" ]]; then
-  DEBIAN_CODENAME="${VERSION_CODENAME:-bookworm}"
-  echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/debian ${DEBIAN_CODENAME}/mongodb-org/8.0 main" \
-    | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list >/dev/null
-else
-  echo "Unsupported distro: ${ID}. This script supports Ubuntu/Debian only."
-  exit 1
-fi
-
-echo "[4/7] Installing MongoDB..."
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-sudo systemctl enable mongod
-sudo systemctl restart mongod
+echo "[4/7] Creating PostgreSQL database and user..."
+sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname = 'finance_app'" | grep -q 1 \
+  || sudo -u postgres psql -c "CREATE USER finance_app WITH PASSWORD 'finance_app';"
+sudo -u postgres psql -tc "SELECT 1 FROM pg_database WHERE datname = 'finance_db'" | grep -q 1 \
+  || sudo -u postgres createdb -O finance_app finance_db
 
 echo "[5/7] Installing Python dependencies in .venv..."
 if [[ ! -x "$PYTHON_EXE" ]]; then
@@ -52,7 +37,7 @@ cd "$PROJECT_ROOT/backend"
 "$PYTHON_EXE" manage.py migrate
 
 echo "[7/7] Completed."
-echo "MongoDB default: mongodb://127.0.0.1:27017"
+echo "PostgreSQL default: postgresql://finance_app:finance_app@127.0.0.1:5432/finance_db"
 echo "Redis default: redis://127.0.0.1:6379"
 echo "Start Django: cd backend && $PYTHON_EXE manage.py runserver"
 echo "Start Celery: cd backend && $PYTHON_EXE -m celery -A config worker -l info"

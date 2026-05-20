@@ -17,6 +17,21 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def load_env_file(path):
+    if not path.exists():
+        return
+
+    for raw_line in path.read_text(encoding='utf-8').splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+load_env_file(BASE_DIR / '.env')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -36,22 +51,14 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -75,19 +82,28 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
+# Business data uses PostgreSQL through Django ORM models.
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'finance_db'),
+        'USER': os.getenv('POSTGRES_USER', 'finance_app'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'finance_app'),
+        'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'OPTIONS': {
+            'connect_timeout': int(os.getenv('POSTGRES_CONNECT_TIMEOUT', '5')),
+        },
     }
 }
 
-# MongoDB connection string for document storage scenarios.
-MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://127.0.0.1:27017')
-MONGODB_NAME = os.getenv('MONGODB_NAME', 'finance_db')
+POSTGRES_TUSHARE_TABLES = {
+    'stock_basic': 'tushare_stock_basic',
+    'trade_cal': 'tushare_trade_cal',
+    'daily': 'tushare_stock_daily',
+    'daily_basic': 'tushare_stock_daily_basic',
+    'sync_jobs': 'system_sync_jobs',
+}
 
 REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1')
 
@@ -107,6 +123,35 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE', 'UTC')
+
+TUSHARE_TOKEN = os.getenv('TUSHARE_TOKEN', '')
+TUSHARE_SYNC_START_DATE = os.getenv('TUSHARE_SYNC_START_DATE', '20240101')
+TUSHARE_SYNC_DAYS_BACK = int(os.getenv('TUSHARE_SYNC_DAYS_BACK', '7'))
+TUSHARE_SYNC_INTERVALS = {
+    'stock_basic': int(os.getenv('TUSHARE_STOCK_BASIC_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'trade_cal': int(os.getenv('TUSHARE_TRADE_CAL_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'daily': int(os.getenv('TUSHARE_DAILY_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'daily_basic': int(os.getenv('TUSHARE_DAILY_BASIC_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+}
+
+CELERY_BEAT_SCHEDULE = {
+    'sync-tushare-stock-basic': {
+        'task': 'api.tasks.sync_tushare_stock_basic',
+        'schedule': TUSHARE_SYNC_INTERVALS['stock_basic'],
+    },
+    'sync-tushare-trade-cal': {
+        'task': 'api.tasks.sync_tushare_trade_cal',
+        'schedule': TUSHARE_SYNC_INTERVALS['trade_cal'],
+    },
+    'sync-tushare-daily-quote': {
+        'task': 'api.tasks.sync_tushare_daily_quote',
+        'schedule': TUSHARE_SYNC_INTERVALS['daily'],
+    },
+    'sync-tushare-daily-basic': {
+        'task': 'api.tasks.sync_tushare_daily_basic',
+        'schedule': TUSHARE_SYNC_INTERVALS['daily_basic'],
+    },
+}
 
 
 # Password validation

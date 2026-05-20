@@ -2,4 +2,5 @@ django
 celery
 redis
 django-redis
-pymongo
+psycopg[binary]
+tushare

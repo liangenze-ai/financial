@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: finance-postgres
+    environment:
+      POSTGRES_DB: finance_db
+      POSTGRES_USER: finance_app
+      POSTGRES_PASSWORD: finance_app
+    ports:
+      - "5432:5432"
+    volumes:
+      - finance_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: finance-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - finance_redis_data:/data
+
+volumes:
+  finance_postgres_data:
+  finance_redis_data:
