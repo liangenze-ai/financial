@@ -4,3 +4,4 @@ redis
 django-redis
 psycopg[binary]
 tushare
+loguru

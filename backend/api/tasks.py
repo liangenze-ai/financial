@@ -4,7 +4,13 @@ from api.services.tushare_sync import (
     sync_daily_basic_data,
     sync_daily_quote_data,
     sync_market_data,
+    sync_namechange_data,
+    sync_st_risk_data,
+    sync_stk_premarket_data,
     sync_stock_basic_data,
+    sync_stock_company_data,
+    sync_stock_hsgt_data,
+    sync_stock_st_data,
     sync_trade_cal_data,
 )
 
@@ -27,6 +33,36 @@ def sync_tushare_stock_basic():
 @shared_task
 def sync_tushare_trade_cal(start_date=None, end_date=None):
     return sync_trade_cal_data(start_date=start_date, end_date=end_date)
+
+
+@shared_task
+def sync_tushare_stk_premarket(start_date=None, end_date=None, full=False, resume=True):
+    return sync_stk_premarket_data(start_date=start_date, end_date=end_date, full=full, resume=resume)
+
+
+@shared_task
+def sync_tushare_stock_st(start_date=None, end_date=None, full=False, resume=True):
+    return sync_stock_st_data(start_date=start_date, end_date=end_date, full=full, resume=resume)
+
+
+@shared_task
+def sync_tushare_st_risk():
+    return sync_st_risk_data()
+
+
+@shared_task
+def sync_tushare_stock_hsgt(start_date=None, end_date=None, full=False, resume=True):
+    return sync_stock_hsgt_data(start_date=start_date, end_date=end_date, full=full, resume=resume)
+
+
+@shared_task
+def sync_tushare_namechange():
+    return sync_namechange_data()
+
+
+@shared_task
+def sync_tushare_stock_company():
+    return sync_stock_company_data()
 
 
 @shared_task

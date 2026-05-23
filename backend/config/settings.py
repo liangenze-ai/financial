@@ -100,6 +100,12 @@ DATABASES = {
 POSTGRES_TUSHARE_TABLES = {
     'stock_basic': 'tushare_stock_basic',
     'trade_cal': 'tushare_trade_cal',
+    'stk_premarket': 'tushare_stk_premarket',
+    'stock_st': 'tushare_stock_st',
+    'st': 'tushare_st_risk_notice',
+    'stock_hsgt': 'tushare_stock_hsgt',
+    'namechange': 'tushare_stock_namechange',
+    'stock_company': 'tushare_stock_company',
     'daily': 'tushare_stock_daily',
     'daily_basic': 'tushare_stock_daily_basic',
     'sync_jobs': 'system_sync_jobs',
@@ -126,10 +132,17 @@ CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE', 'UTC')
 
 TUSHARE_TOKEN = os.getenv('TUSHARE_TOKEN', '')
 TUSHARE_SYNC_START_DATE = os.getenv('TUSHARE_SYNC_START_DATE', '20240101')
+TUSHARE_FULL_SYNC_START_DATE = os.getenv('TUSHARE_FULL_SYNC_START_DATE', '19901219')
 TUSHARE_SYNC_DAYS_BACK = int(os.getenv('TUSHARE_SYNC_DAYS_BACK', '7'))
 TUSHARE_SYNC_INTERVALS = {
     'stock_basic': int(os.getenv('TUSHARE_STOCK_BASIC_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
     'trade_cal': int(os.getenv('TUSHARE_TRADE_CAL_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'stk_premarket': int(os.getenv('TUSHARE_STK_PREMARKET_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'stock_st': int(os.getenv('TUSHARE_STOCK_ST_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'st': int(os.getenv('TUSHARE_ST_RISK_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'stock_hsgt': int(os.getenv('TUSHARE_STOCK_HSGT_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'namechange': int(os.getenv('TUSHARE_NAMECHANGE_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'stock_company': int(os.getenv('TUSHARE_STOCK_COMPANY_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
     'daily': int(os.getenv('TUSHARE_DAILY_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
     'daily_basic': int(os.getenv('TUSHARE_DAILY_BASIC_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
 }
@@ -142,6 +155,30 @@ CELERY_BEAT_SCHEDULE = {
     'sync-tushare-trade-cal': {
         'task': 'api.tasks.sync_tushare_trade_cal',
         'schedule': TUSHARE_SYNC_INTERVALS['trade_cal'],
+    },
+    'sync-tushare-stk-premarket': {
+        'task': 'api.tasks.sync_tushare_stk_premarket',
+        'schedule': TUSHARE_SYNC_INTERVALS['stk_premarket'],
+    },
+    'sync-tushare-stock-st': {
+        'task': 'api.tasks.sync_tushare_stock_st',
+        'schedule': TUSHARE_SYNC_INTERVALS['stock_st'],
+    },
+    'sync-tushare-st-risk': {
+        'task': 'api.tasks.sync_tushare_st_risk',
+        'schedule': TUSHARE_SYNC_INTERVALS['st'],
+    },
+    'sync-tushare-stock-hsgt': {
+        'task': 'api.tasks.sync_tushare_stock_hsgt',
+        'schedule': TUSHARE_SYNC_INTERVALS['stock_hsgt'],
+    },
+    'sync-tushare-namechange': {
+        'task': 'api.tasks.sync_tushare_namechange',
+        'schedule': TUSHARE_SYNC_INTERVALS['namechange'],
+    },
+    'sync-tushare-stock-company': {
+        'task': 'api.tasks.sync_tushare_stock_company',
+        'schedule': TUSHARE_SYNC_INTERVALS['stock_company'],
     },
     'sync-tushare-daily-quote': {
         'task': 'api.tasks.sync_tushare_daily_quote',

@@ -320,3 +320,5 @@ GET /api/tushare/sync/status/
 ## 2026-05-20 PostgreSQL TuShare 同步与接口整理简记
 今日开发工作：围绕 PostgreSQL 方案补齐 TuShare 业务表 ORM 模型、迁移文件、同步服务与 Celery 定时任务，并完善健康检查、同步状态和数据目录接口。
 后续可能任务：继续跑通本地 PostgreSQL 中的 TuShare 全量/增量同步，联调前端诊股页面的数据读取，并补充同步异常处理、接口测试和部署文档。
+## 2026-05-22 同步默认增量与日志完善简记
+今日开发工作：已完成 `sync_tushare` 默认按数据库最新日期自动增量同步并接入支持轮转压缩的 `loguru` 日志，后续需要继续补齐 `trade_cal` 表更多历史记录。

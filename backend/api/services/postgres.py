@@ -1,6 +1,19 @@
 from django.conf import settings
 
-from api.models import DailyBasic, DailyQuote, StockBasic, StockBasicHistory, SyncJob, TradeCal
+from api.models import (
+    DailyBasic,
+    DailyQuote,
+    StockBasic,
+    StockBasicHistory,
+    StockCapitalPremarket,
+    StockCompany,
+    StockHsgt,
+    StockNameChange,
+    StockSTList,
+    StockSTRiskNotice,
+    SyncJob,
+    TradeCal,
+)
 
 
 TABLES = settings.POSTGRES_TUSHARE_TABLES
@@ -17,6 +30,42 @@ TUSHARE_CATALOG = {
         'section': '基础数据',
         'interface': 'trade_cal',
         'table': TABLES['trade_cal'],
+    },
+    'stk_premarket': {
+        'category': '股票数据',
+        'section': '基础数据',
+        'interface': 'stk_premarket',
+        'table': TABLES['stk_premarket'],
+    },
+    'stock_st': {
+        'category': '股票数据',
+        'section': '基础数据',
+        'interface': 'stock_st',
+        'table': TABLES['stock_st'],
+    },
+    'st': {
+        'category': '股票数据',
+        'section': '基础数据',
+        'interface': 'st',
+        'table': TABLES['st'],
+    },
+    'stock_hsgt': {
+        'category': '股票数据',
+        'section': '基础数据',
+        'interface': 'stock_hsgt',
+        'table': TABLES['stock_hsgt'],
+    },
+    'namechange': {
+        'category': '股票数据',
+        'section': '基础数据',
+        'interface': 'namechange',
+        'table': TABLES['namechange'],
+    },
+    'stock_company': {
+        'category': '股票数据',
+        'section': '基础数据',
+        'interface': 'stock_company',
+        'table': TABLES['stock_company'],
     },
     'daily': {
         'category': '股票数据',
@@ -48,6 +97,34 @@ MODEL_CONFIG = {
     'trade_cal': {
         'model': TradeCal,
         'fields': ['exchange', 'cal_date', 'is_open', 'pretrade_date'],
+    },
+    'stk_premarket': {
+        'model': StockCapitalPremarket,
+        'fields': ['trade_date', 'ts_code', 'total_share', 'float_share', 'pre_close', 'up_limit', 'down_limit'],
+    },
+    'stock_st': {
+        'model': StockSTList,
+        'fields': ['ts_code', 'name', 'trade_date', 'type', 'type_name'],
+    },
+    'st': {
+        'model': StockSTRiskNotice,
+        'fields': ['ts_code', 'name', 'pub_date', 'imp_date', 'st_tpye', 'st_reason', 'st_explain'],
+    },
+    'stock_hsgt': {
+        'model': StockHsgt,
+        'fields': ['ts_code', 'trade_date', 'type', 'name', 'type_name'],
+    },
+    'namechange': {
+        'model': StockNameChange,
+        'fields': ['ts_code', 'name', 'start_date', 'end_date', 'ann_date', 'change_reason'],
+    },
+    'stock_company': {
+        'model': StockCompany,
+        'fields': [
+            'ts_code', 'com_name', 'com_id', 'exchange', 'chairman', 'manager', 'secretary',
+            'reg_capital', 'setup_date', 'province', 'city', 'introduction', 'website', 'email',
+            'office', 'employees', 'main_business', 'business_scope',
+        ],
     },
     'daily': {
         'model': DailyQuote,
