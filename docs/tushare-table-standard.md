@@ -26,6 +26,26 @@
 - 数值字段按 TuShare 含义选择 `FloatField` 或 `IntegerField`；长文本使用 `TextField`。
 - TuShare 官方字段拼写如果存在历史拼写问题，入库字段名默认保持官方字段名，必要时用注释说明，例如 `st_tpye`。
 
+### 字段注释标准
+
+字段的 `verbose_name` 和 `db_comment` 必须使用 TuShare 官方接口文档“输出参数”表中的“描述”内容，不能只写字段名，也不能写“接口字段 xxx”“TuShare字段 xxx”这类占位说明。
+
+例如，`fina_indicator` 接口中：
+
+```python
+eps = models.FloatField('基本每股收益', blank=True, null=True, db_comment='基本每股收益')
+total_revenue_ps = models.FloatField('每股营业总收入', blank=True, null=True, db_comment='每股营业总收入')
+```
+
+不应写成：
+
+```python
+eps = models.FloatField('财务指标字段 eps', blank=True, null=True, db_comment='财务指标接口字段 eps')
+total_revenue_ps = models.FloatField('TuShare字段 total_revenue_ps', blank=True, null=True, db_comment='TuShare字段 total_revenue_ps')
+```
+
+如果官方描述中包含单位、百分号或括号，应尽量原样保留，例如 `小单买入量（手）`、`基本每股收益同比增长率(%)`。如果某个字段在当前官方文档中没有描述，但接口实际返回该字段，需要在代码注释或开发日志中说明来源，并暂时使用清晰的中文业务说明。
+
 ## 约束与索引标准
 
 每张表必须按同步主键和查询场景设计唯一约束与索引：
@@ -122,4 +142,3 @@ cd backend
 - 返回行数。
 - 入库行数。
 - 是否存在接口字段拼写、分页、日期窗口、积分权限等注意事项。
-

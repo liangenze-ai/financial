@@ -1,3 +1,61 @@
+<#
+.SYNOPSIS
+  Install and prepare local Windows dependencies for the finance backend.
+
+.DESCRIPTION
+  This script is intended for first-time Windows setup. It installs PostgreSQL
+  and a Redis-compatible service, installs Python dependencies into the
+  repository .venv, and applies Django migrations.
+
+  It requires an elevated PowerShell session because package installation and
+  service startup need Administrator permissions.
+
+  Package manager behavior:
+    - Prefer winget when available.
+    - Fall back to choco for PostgreSQL or Redis when winget fails and choco
+      is available.
+    - Redis is installed through Memurai Developer with winget, or redis-64
+      with Chocolatey.
+
+  Database/user behavior:
+    - The script prints the expected database settings:
+      database finance_db, user finance_app, password finance_app.
+    - It does not fully automate PostgreSQL role/database creation on Windows,
+      because installer defaults and admin credentials vary by machine.
+    - If migrations fail because the database or role is missing, create them
+      manually in pgAdmin/psql and rerun this script.
+
+  Use this script for system-level dependency setup. Use
+  start_local_postgres.ps1/start_local_redis.ps1 for portable local services
+  after they have already been installed or unpacked.
+
+.PARAMETER ProjectRoot
+  Repository root. Defaults to the parent directory of scripts/.
+
+.EXAMPLE
+  Start-Process powershell -Verb RunAs
+
+  Open an elevated PowerShell window before running the install script.
+
+.EXAMPLE
+  .\scripts\install_windows.ps1
+
+  Install PostgreSQL/Redis-compatible service, install backend Python
+  dependencies, and run Django migrations.
+
+.EXAMPLE
+  .\scripts\install_windows.ps1 -ProjectRoot D:\projects\理财项目设计
+
+  Run setup for an explicit repository path.
+
+.NOTES
+  Expected Python virtual environment:
+    .venv\Scripts\python.exe
+
+  Expected backend requirements file:
+    backend\requirements.txt
+#>
+
 Param(
   [string]$ProjectRoot = (Resolve-Path "$PSScriptRoot\.." | Select-Object -ExpandProperty Path)
 )

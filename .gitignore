@@ -19,6 +19,7 @@ db.sqlite3
 .env
 *.env
 celerybeat-schedule
+backend/artifacts/
 
 # IDE
 .vscode/

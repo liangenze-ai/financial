@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from loguru import logger
+from loguru import logger as _logger
 
 
 LOG_DIR = Path(__file__).resolve().parent.parent / 'logs'
@@ -18,11 +18,11 @@ _LOGGING_CONFIGURED = False
 def setup_logging():
     global _LOGGING_CONFIGURED
     if _LOGGING_CONFIGURED:
-        return logger
+        return _logger
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
-    logger.remove()
-    logger.add(
+    _logger.remove()
+    _logger.add(
         sys.stdout,
         level='INFO',
         format=LOG_FORMAT,
@@ -31,7 +31,7 @@ def setup_logging():
         diagnose=False,
         colorize=True,
     )
-    logger.add(
+    _logger.add(
         LOG_DIR / 'finance-backend-{time:YYYY-MM-DD}.log',
         level='DEBUG',
         format=LOG_FORMAT,
@@ -44,4 +44,7 @@ def setup_logging():
         compression='zip',
     )
     _LOGGING_CONFIGURED = True
-    return logger
+    return _logger
+
+
+logger = setup_logging()

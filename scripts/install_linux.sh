@@ -1,4 +1,56 @@
 #!/usr/bin/env bash
+#
+# install_linux.sh
+#
+# Purpose:
+#   First-time Linux setup for the finance backend. This script installs Redis,
+#   PostgreSQL, PostgreSQL development headers, backend Python dependencies, and
+#   applies Django migrations.
+#
+# When to use:
+#   - Fresh Ubuntu/Debian development machine.
+#   - CI-like machine where apt-get and sudo are available.
+#   - Local environment where Redis and PostgreSQL should be managed by systemd.
+#
+# When not to use:
+#   - Windows machines. Use scripts/install_windows.ps1 instead.
+#   - Machines where PostgreSQL/Redis are provided by Docker or external
+#     services and you do not want system packages installed.
+#   - Production hosts without reviewing package versions, credentials, and
+#     service policy first.
+#
+# What it does:
+#   1. Installs base apt tools: curl, gnupg, lsb-release, certificates, HTTPS
+#      transport.
+#   2. Installs redis-server, enables it, and restarts it.
+#   3. Installs postgresql, postgresql-contrib, and libpq-dev, then enables and
+#      restarts PostgreSQL.
+#   4. Creates PostgreSQL role finance_app with password finance_app if missing.
+#   5. Creates PostgreSQL database finance_db owned by finance_app if missing.
+#   6. Upgrades pip and installs backend/requirements.txt into .venv.
+#   7. Runs Django migrations from backend/.
+#
+# Required existing files:
+#   - .venv/bin/python
+#   - backend/requirements.txt
+#   - backend/manage.py
+#
+# Defaults created/used:
+#   - PostgreSQL URL: postgresql://finance_app:finance_app@127.0.0.1:5432/finance_db
+#   - Redis URL:      redis://127.0.0.1:6379
+#
+# Usage:
+#   ./scripts/install_linux.sh
+#
+# Common follow-up commands:
+#   cd backend && ../.venv/bin/python manage.py runserver
+#   cd backend && ../.venv/bin/python -m celery -A config worker -l info
+#
+# Notes:
+#   - The script uses sudo and may prompt for your password.
+#   - It is idempotent for the finance_app role and finance_db database.
+#   - It performs real system package and service changes.
+#
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

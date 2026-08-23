@@ -47,6 +47,22 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+QUANT_STOCK_DIAGNOSIS = {
+    'primary_artifacts_dir': os.getenv(
+        'QUANT_STOCK_DIAGNOSIS_PRIMARY_ARTIFACTS_DIR',
+        'artifacts/quant_baseline_medium_quality_value_ablate_calibrated',
+    ),
+    'fallback_artifacts_dir': os.getenv(
+        'QUANT_STOCK_DIAGNOSIS_FALLBACK_ARTIFACTS_DIR',
+        'artifacts/quant_baseline_medium_no_momentum_quality_value_calibrated',
+    ),
+    'switch_months': [
+        month.strip()
+        for month in os.getenv('QUANT_STOCK_DIAGNOSIS_SWITCH_MONTHS', '202604').split(',')
+        if month.strip()
+    ],
+}
+
 
 # Application definition
 
@@ -108,6 +124,32 @@ POSTGRES_TUSHARE_TABLES = {
     'stock_company': 'tushare_stock_company',
     'daily': 'tushare_stock_daily',
     'daily_basic': 'tushare_stock_daily_basic',
+    'adj_factor': 'tushare_adj_factor',
+    'fina_indicator': 'tushare_fina_indicator',
+    'income': 'tushare_income',
+    'balancesheet': 'tushare_balancesheet',
+    'cashflow': 'tushare_cashflow',
+    'index_basic': 'tushare_index_basic',
+    'index_daily': 'tushare_index_daily',
+    'index_classify': 'tushare_index_classify',
+    'index_member_all': 'tushare_index_member_all',
+    'moneyflow': 'tushare_moneyflow',
+    'margin_detail': 'tushare_margin_detail',
+    'hk_hold': 'tushare_hk_hold',
+    'suspend_d': 'tushare_suspend_d',
+    'stk_limit': 'tushare_stk_limit',
+    'share_float': 'tushare_share_float',
+    'pledge_stat': 'tushare_pledge_stat',
+    'stk_factor_pro': 'tushare_stk_factor_pro',
+    'margin': 'tushare_margin',
+    'pledge_detail': 'tushare_pledge_detail',
+    'forecast': 'tushare_forecast',
+    'express': 'tushare_express',
+    'block_trade': 'tushare_block_trade',
+    'top_list': 'tushare_top_list',
+    'top_inst': 'tushare_top_inst',
+    'dividend': 'tushare_dividend',
+    'repurchase': 'tushare_repurchase',
     'sync_jobs': 'system_sync_jobs',
 }
 
@@ -145,6 +187,32 @@ TUSHARE_SYNC_INTERVALS = {
     'stock_company': int(os.getenv('TUSHARE_STOCK_COMPANY_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
     'daily': int(os.getenv('TUSHARE_DAILY_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
     'daily_basic': int(os.getenv('TUSHARE_DAILY_BASIC_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'adj_factor': int(os.getenv('TUSHARE_ADJ_FACTOR_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'fina_indicator': int(os.getenv('TUSHARE_FINA_INDICATOR_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'income': int(os.getenv('TUSHARE_INCOME_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'balancesheet': int(os.getenv('TUSHARE_BALANCESHEET_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'cashflow': int(os.getenv('TUSHARE_CASHFLOW_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'index_basic': int(os.getenv('TUSHARE_INDEX_BASIC_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'index_daily': int(os.getenv('TUSHARE_INDEX_DAILY_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'index_classify': int(os.getenv('TUSHARE_INDEX_CLASSIFY_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'index_member_all': int(os.getenv('TUSHARE_INDEX_MEMBER_ALL_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24 * 7))),
+    'moneyflow': int(os.getenv('TUSHARE_MONEYFLOW_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'margin_detail': int(os.getenv('TUSHARE_MARGIN_DETAIL_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'hk_hold': int(os.getenv('TUSHARE_HK_HOLD_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'suspend_d': int(os.getenv('TUSHARE_SUSPEND_D_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'stk_limit': int(os.getenv('TUSHARE_STK_LIMIT_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'share_float': int(os.getenv('TUSHARE_SHARE_FLOAT_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'pledge_stat': int(os.getenv('TUSHARE_PLEDGE_STAT_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'stk_factor_pro': int(os.getenv('TUSHARE_STK_FACTOR_PRO_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'margin': int(os.getenv('TUSHARE_MARGIN_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'pledge_detail': int(os.getenv('TUSHARE_PLEDGE_DETAIL_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'forecast': int(os.getenv('TUSHARE_FORECAST_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'express': int(os.getenv('TUSHARE_EXPRESS_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'block_trade': int(os.getenv('TUSHARE_BLOCK_TRADE_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'top_list': int(os.getenv('TUSHARE_TOP_LIST_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'top_inst': int(os.getenv('TUSHARE_TOP_INST_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'dividend': int(os.getenv('TUSHARE_DIVIDEND_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
+    'repurchase': int(os.getenv('TUSHARE_REPURCHASE_SYNC_INTERVAL_SECONDS', str(60 * 60 * 24))),
 }
 
 CELERY_BEAT_SCHEDULE = {
@@ -187,6 +255,106 @@ CELERY_BEAT_SCHEDULE = {
     'sync-tushare-daily-basic': {
         'task': 'api.tasks.sync_tushare_daily_basic',
         'schedule': TUSHARE_SYNC_INTERVALS['daily_basic'],
+    },
+    'sync-tushare-adj-factor': {
+        'task': 'api.tasks.sync_tushare_adj_factor',
+        'schedule': TUSHARE_SYNC_INTERVALS['adj_factor'],
+    },
+    'sync-tushare-fina-indicator': {
+        'task': 'api.tasks.sync_tushare_fina_indicator',
+        'schedule': TUSHARE_SYNC_INTERVALS['fina_indicator'],
+    },
+    'sync-tushare-income': {
+        'task': 'api.tasks.sync_tushare_income',
+        'schedule': TUSHARE_SYNC_INTERVALS['income'],
+    },
+    'sync-tushare-balancesheet': {
+        'task': 'api.tasks.sync_tushare_balancesheet',
+        'schedule': TUSHARE_SYNC_INTERVALS['balancesheet'],
+    },
+    'sync-tushare-cashflow': {
+        'task': 'api.tasks.sync_tushare_cashflow',
+        'schedule': TUSHARE_SYNC_INTERVALS['cashflow'],
+    },
+    'sync-tushare-index-basic': {
+        'task': 'api.tasks.sync_tushare_index_basic',
+        'schedule': TUSHARE_SYNC_INTERVALS['index_basic'],
+    },
+    'sync-tushare-index-daily': {
+        'task': 'api.tasks.sync_tushare_index_daily',
+        'schedule': TUSHARE_SYNC_INTERVALS['index_daily'],
+    },
+    'sync-tushare-index-classify': {
+        'task': 'api.tasks.sync_tushare_index_classify',
+        'schedule': TUSHARE_SYNC_INTERVALS['index_classify'],
+    },
+    'sync-tushare-index-member-all': {
+        'task': 'api.tasks.sync_tushare_index_member_all',
+        'schedule': TUSHARE_SYNC_INTERVALS['index_member_all'],
+    },
+    'sync-tushare-moneyflow': {
+        'task': 'api.tasks.sync_tushare_moneyflow',
+        'schedule': TUSHARE_SYNC_INTERVALS['moneyflow'],
+    },
+    'sync-tushare-margin-detail': {
+        'task': 'api.tasks.sync_tushare_margin_detail',
+        'schedule': TUSHARE_SYNC_INTERVALS['margin_detail'],
+    },
+    'sync-tushare-suspend-d': {
+        'task': 'api.tasks.sync_tushare_suspend_d',
+        'schedule': TUSHARE_SYNC_INTERVALS['suspend_d'],
+    },
+    'sync-tushare-stk-limit': {
+        'task': 'api.tasks.sync_tushare_stk_limit',
+        'schedule': TUSHARE_SYNC_INTERVALS['stk_limit'],
+    },
+    'sync-tushare-share-float': {
+        'task': 'api.tasks.sync_tushare_share_float',
+        'schedule': TUSHARE_SYNC_INTERVALS['share_float'],
+    },
+    'sync-tushare-pledge-stat': {
+        'task': 'api.tasks.sync_tushare_pledge_stat',
+        'schedule': TUSHARE_SYNC_INTERVALS['pledge_stat'],
+    },
+    'sync-tushare-stk-factor-pro': {
+        'task': 'api.tasks.sync_tushare_stk_factor_pro',
+        'schedule': TUSHARE_SYNC_INTERVALS['stk_factor_pro'],
+    },
+    'sync-tushare-margin': {
+        'task': 'api.tasks.sync_tushare_margin',
+        'schedule': TUSHARE_SYNC_INTERVALS['margin'],
+    },
+    'sync-tushare-pledge-detail': {
+        'task': 'api.tasks.sync_tushare_pledge_detail',
+        'schedule': TUSHARE_SYNC_INTERVALS['pledge_detail'],
+    },
+    'sync-tushare-forecast': {
+        'task': 'api.tasks.sync_tushare_forecast',
+        'schedule': TUSHARE_SYNC_INTERVALS['forecast'],
+    },
+    'sync-tushare-express': {
+        'task': 'api.tasks.sync_tushare_express',
+        'schedule': TUSHARE_SYNC_INTERVALS['express'],
+    },
+    'sync-tushare-block-trade': {
+        'task': 'api.tasks.sync_tushare_block_trade',
+        'schedule': TUSHARE_SYNC_INTERVALS['block_trade'],
+    },
+    'sync-tushare-top-list': {
+        'task': 'api.tasks.sync_tushare_top_list',
+        'schedule': TUSHARE_SYNC_INTERVALS['top_list'],
+    },
+    'sync-tushare-top-inst': {
+        'task': 'api.tasks.sync_tushare_top_inst',
+        'schedule': TUSHARE_SYNC_INTERVALS['top_inst'],
+    },
+    'sync-tushare-dividend': {
+        'task': 'api.tasks.sync_tushare_dividend',
+        'schedule': TUSHARE_SYNC_INTERVALS['dividend'],
+    },
+    'sync-tushare-repurchase': {
+        'task': 'api.tasks.sync_tushare_repurchase',
+        'schedule': TUSHARE_SYNC_INTERVALS['repurchase'],
     },
 }
 

@@ -1,29 +1,78 @@
-<view class="container">
-  <view class="header">
-    <text class="title">全市场股票评分</text>
-    <text class="desc">模型为每只股票打分，并展示主要影响因子</text>
+<view class="page">
+  <view class="toolbar">
+    <view class="field">
+      <text class="field-label">股票代码</text>
+      <input class="input" value="{{tsCode}}" bindinput="onTsCodeInput" placeholder="001390.SZ" />
+    </view>
+    <view class="field">
+      <text class="field-label">交易日</text>
+      <input class="input" value="{{tradeDate}}" bindinput="onTradeDateInput" placeholder="20260401" />
+    </view>
+    <button class="run-button" loading="{{loading}}" bindtap="fetchDiagnosis">诊断</button>
   </view>
-  <view wx:if="{{loading}}" class="loading">加载中...</view>
-  <block wx:else>
-    <block wx:for="{{stocks}}" wx:key="code">
-      <view class="stock-card">
-        <view class="stock-header">
-          <text class="stock-name">{{item.name}}({{item.code}})</text>
-          <text class="stock-score">{{item.score}}<text class="score-unit">分</text></text>
+
+  <view wx:if="{{error}}" class="alert">{{error}}</view>
+  <view wx:if="{{loading}}" class="loading">正在读取模型诊断...</view>
+
+  <block wx:if="{{diagnosis && !loading}}">
+    <view class="summary">
+      <view class="summary-main">
+        <text class="stock-name">{{diagnosis.stockName}}</text>
+        <text class="stock-meta">{{diagnosis.tsCode}} · {{diagnosis.industry}} · {{diagnosis.tradeDate}}</text>
+      </view>
+      <view class="signal">
+        <text class="signal-label">{{diagnosis.signalLabel}}</text>
+        <text class="signal-confidence">置信度 {{diagnosis.confidence}}</text>
+      </view>
+      <view class="signal-desc">{{diagnosis.signalDescription}}</view>
+    </view>
+
+    <view class="metrics">
+      <view class="metric">
+        <text class="metric-value">{{diagnosis.upDecile}}</text>
+        <text class="metric-label">上涨Decile</text>
+      </view>
+      <view class="metric">
+        <text class="metric-value">{{diagnosis.outperformDecile}}</text>
+        <text class="metric-label">跑赢Decile</text>
+      </view>
+      <view class="metric">
+        <text class="metric-value">{{diagnosis.modelRole}}</text>
+        <text class="metric-label">模型角色</text>
+      </view>
+    </view>
+
+    <view wx:if="{{warnings.length}}" class="section">
+      <view class="section-title">风险提示</view>
+      <view class="warning-list">
+        <text wx:for="{{warnings}}" wx:key="*this" class="warning-item">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">目标分解</view>
+      <view wx:for="{{targets}}" wx:key="key" class="target-card">
+        <view class="target-header">
+          <text class="target-title">{{item.label}}</text>
+          <text class="target-rank">{{item.rank}}</text>
         </view>
-        <progress percent="{{item.score}}" show-info stroke-width="8" active color="#0a7d5a"/>
-        <view class="factors">
-          <block wx:for="{{item.factors}}" wx:key="factor">
-            <view class="factor-item">
-              <text class="factor-name">{{factor.name}}：</text>
-              <text class="factor-value">{{factor.value}}</text>
-            </view>
-          </block>
+        <view class="target-grid">
+          <text>Decile {{item.decile}}</text>
+          <text>{{item.cohort}}</text>
+          <text>收益 {{item.futureReturn}}</text>
+          <text>超额 {{item.futureExcess}}</text>
         </view>
-        <view class="reason">
-          <text class="reason-label">评分理由：</text>{{item.reason}}
+        <view class="contrib-title">正向贡献</view>
+        <view class="contrib-row" wx:for="{{item.positive}}" wx:key="feature">
+          <text>{{item.feature}}</text>
+          <text>{{item.contribution}}</text>
+        </view>
+        <view wx:if="{{item.negative.length}}" class="contrib-title">负向贡献</view>
+        <view class="contrib-row negative" wx:for="{{item.negative}}" wx:key="feature">
+          <text>{{item.feature}}</text>
+          <text>{{item.contribution}}</text>
         </view>
       </view>
-    </block>
+    </view>
   </block>
 </view>

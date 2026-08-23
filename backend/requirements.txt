@@ -1,7 +1,11 @@
 django
 celery
-redis
+redis<6
 django-redis
 psycopg[binary]
 tushare
 loguru
+pandas
+numpy
+scikit-learn
+joblib

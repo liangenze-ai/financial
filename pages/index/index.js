@@ -1,3 +1,9 @@
 Page({
-  data: {}
+  data: {},
+
+  goStockScore() {
+    wx.navigateTo({
+      url: '/pages/stockscore/index'
+    });
+  }
 });

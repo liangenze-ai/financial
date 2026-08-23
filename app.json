@@ -5,9 +5,9 @@
   ],
   "window": {
     "navigationBarTitleText": "理财助手",
-    "navigationBarBackgroundColor": "#0A7D5A",
+    "navigationBarBackgroundColor": "#0B7A5A",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#F4F8F6",
+    "backgroundColor": "#F4F7F6",
     "backgroundTextStyle": "light"
   },
   "style": "v2",

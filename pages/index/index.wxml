@@ -1,6 +1,7 @@
 <view class="container">
   <view class="hero">
-    <view class="title">理财小程序已初始化</view>
-    <view class="subtitle">下一步可以接入账户、资产和收益模块</view>
+    <view class="title">理财助手</view>
+    <view class="subtitle">查看模型诊断、目标分位和风险提示。</view>
+    <button class="primary-button" bindtap="goStockScore">打开股票诊断</button>
   </view>
 </view>
